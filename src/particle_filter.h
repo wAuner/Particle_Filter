@@ -45,7 +45,7 @@ public:
 
 	// Constructor
 	// @param num_particles Number of particles
-	ParticleFilter() : num_particles(0), is_initialized(false) {}
+	ParticleFilter() : num_particles(1000), is_initialized(false) {}
 
 	// Destructor
 	~ParticleFilter() {}
@@ -78,24 +78,29 @@ public:
 	 * @param predicted Vector of predicted landmark observations
 	 * @param observations Vector of landmark observations
 	 */
-	void dataAssociation(std::vector<LandmarkObs> predicted, std::vector<LandmarkObs>& observations);
+  void dataAssociation(const Map& mapLandmarks, std::vector<LandmarkObs>& measurements);
 	
 	/**
 	 * updateWeights Updates the weights for each particle based on the likelihood of the 
 	 *   observed measurements. 
 	 * @param sensor_range Range [m] of sensor
 	 * @param std_landmark[] Array of dimension 2 [Landmark measurement uncertainty [x [m], y [m]]]
-	 * @param observations Vector of landmark observations
-	 * @param map Map class containing map landmarks
+	 * @param observations Vector of landmark observations in car/particle coordinates
+	 * @param map Map class containing map landmarks in map coordinates
 	 */
 	void updateWeights(double sensor_range, double std_landmark[], const std::vector<LandmarkObs> &observations,
 			const Map &map_landmarks);
-	
+
+  std::vector<LandmarkObs> car2MapCoordinates(const std::vector<LandmarkObs> &observations,
+                                              const Particle particle);
+
+  double probMultiVariate(double x_coord, double y_coord, double x_mean, double y_mean, double std_x, double std_y);
+
 	/**
 	 * resample Resamples from the updated set of particles to form
 	 *   the new set of particles.
 	 */
-	void resample();
+  void resample();
 
 	/*
 	 * Set a particles list of associations, along with the associations calculated world x,y coordinates
