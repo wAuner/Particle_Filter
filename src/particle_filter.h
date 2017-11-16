@@ -34,6 +34,8 @@ class ParticleFilter {
 	
 	// Flag, if filter is initialized
 	bool is_initialized;
+
+  bool debug_mode = true;
 	
 	// Vector of weights of all particles
 	std::vector<double> weights;
@@ -45,7 +47,7 @@ public:
 
 	// Constructor
 	// @param num_particles Number of particles
-	ParticleFilter() : num_particles(1000), is_initialized(false) {}
+	ParticleFilter() : num_particles(0), is_initialized(false) {}
 
 	// Destructor
 	~ParticleFilter() {}
@@ -107,7 +109,9 @@ public:
 	 * This can be a very useful debugging tool to make sure transformations are correct and assocations correctly connected
 	 */
 	Particle SetAssociations(Particle particle, std::vector<int> associations, std::vector<double> sense_x, std::vector<double> sense_y);
-	
+
+  double normalizeAngle(double);
+
 	std::string getAssociations(Particle best);
 	std::string getSenseX(Particle best);
 	std::string getSenseY(Particle best);
