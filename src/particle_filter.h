@@ -94,9 +94,9 @@ public:
 			const Map &map_landmarks);
 
   std::vector<LandmarkObs> car2MapCoordinates(const std::vector<LandmarkObs> &observations,
-                                              const Particle particle);
+                                              const Particle& particle);
 
-  double probMultiVariate(double x_coord, double y_coord, double x_mean, double y_mean, double std_x, double std_y);
+  double probMultiVariate(const LandmarkObs& measurement, const Map::single_landmark_s& nearest_landmark, const double std_landmark[]);
 
 	/**
 	 * resample Resamples from the updated set of particles to form
