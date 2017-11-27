@@ -64,6 +64,10 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
    cout << "Prediction...\n";
    cout << "===============================================\n";
   }
+  // create distributions around predicted mean
+  std::normal_distribution<double> norm_x(0, std_pos[0]);
+  std::normal_distribution<double> norm_y(0, std_pos[1]);
+  std::normal_distribution<double> norm_theta(0, std_pos[2]);
 
   for (auto &part : particles) {
     if (debug_mode) {
@@ -72,23 +76,14 @@ void ParticleFilter::prediction(double delta_t, double std_pos[], double velocit
     }
     // use motion model for prediction
     if (fabs(yaw_rate) > 1e-3) {
-      part.x += velocity / yaw_rate * (sin(part.theta + yaw_rate * delta_t) - sin(part.theta));
-      part.y += velocity / yaw_rate * (cos(part.theta) - cos(part.theta + yaw_rate * delta_t));
-      part.theta += yaw_rate * delta_t;
+      part.x += velocity / yaw_rate * (sin(part.theta + yaw_rate * delta_t) - sin(part.theta)) + norm_x(random_engine);
+      part.y += velocity / yaw_rate * (cos(part.theta) - cos(part.theta + yaw_rate * delta_t)) + norm_y(random_engine);
+      part.theta += yaw_rate * delta_t + norm_theta(random_engine);
     } else {
-      part.x += velocity * delta_t * cos(part.theta);
-      part.y += velocity * delta_t * sin(part.theta);
+      part.x += velocity * delta_t * cos(part.theta) + norm_x(random_engine);
+      part.y += velocity * delta_t * sin(part.theta) + norm_y(random_engine);
     }
 
-    // create distributions around predicted mean
-    std::normal_distribution<double> norm_x(part.x, std_pos[0]);
-    std::normal_distribution<double> norm_y(part.y, std_pos[1]);
-    std::normal_distribution<double> norm_theta(part.theta, std_pos[2]);
-
-    // draw from normal distribution at new predicted mean, normalize angle
-    part.x = norm_x(random_engine);
-    part.y = norm_y(random_engine);
-    part.theta = norm_theta(random_engine);
     part.theta = normalizeAngle(part.theta);
 
     if (debug_mode) {
