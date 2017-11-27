@@ -1,7 +1,7 @@
+# Particle Filter for Localization
+
 ![](particle_filter.gif)
 
-
-# Particle Filter for Localization
 This is my implementation of the Particle Filter Project in C++ for Udacity's Self-Driving-Car Engineer Nanodegree.
 Uses Laser measurement data to locate with landmark map.
 
